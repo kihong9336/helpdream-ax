@@ -3,23 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="HelpDream은 반복 업무를 찾아 AI 에이전트와 자동화 시스템으로 직접 구현하는 실행형 AX 스튜디오입니다." />
-  <meta name="theme-color" content="#11130f" />
-  <title>HelpDream — 실행형 AX 스튜디오</title>
+  <meta name="description" content="에이치디미디어는 기업의 반복 업무를 찾아 AI 에이전트와 자동화 시스템으로 직접 구현하는 실행형 AX 스튜디오입니다." />
+  <meta name="theme-color" content="#102f4b" />
+  <meta property="og:title" content="에이치디미디어 — 실행형 AX 스튜디오" />
+  <meta property="og:description" content="보고서가 아니라, 작동하는 AI를 만듭니다." />
+  <meta property="og:image" content="assets/hdmedia-ci-original.jpg" />
+  <link rel="icon" href="assets/hdmedia-ci-original.jpg" />
+  <title>에이치디미디어 — 실행형 AX 스튜디오</title>
   <style>
     :root {
-      --ink: #12140f;
-      --paper: #f3f1e9;
-      --surface: #fffdf6;
-      --muted: #686b61;
-      --line: #cac8bd;
-      --accent: #dfff53;
-      --accent-ink: #1b2200;
-      --dark: #11130f;
-      --dark-muted: #a9ada0;
+      --ink: #173e61;
+      --paper: #fbf7f2;
+      --surface: #fffdf9;
+      --muted: #6f7277;
+      --line: #d7d2cd;
+      --accent: #f0d8df;
+      --accent-ink: #173e61;
+      --dark: #102f4b;
+      --dark-muted: #bcc7d0;
       --radius: 18px;
       --max: 1180px;
-      --shadow: 0 24px 80px rgba(18, 20, 15, .09);
+      --shadow: 0 24px 80px rgba(23, 62, 97, .11);
     }
 
     * { box-sizing: border-box; }
@@ -59,8 +63,8 @@
     }
     .nav.scrolled { border-bottom-color: var(--line); }
     .nav-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 850; letter-spacing: -.05em; font-size: 21px; }
-    .brand-mark { width: 18px; height: 18px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50% 50% 50% 5px; transform: rotate(-12deg); }
+    .brand { display: inline-flex; align-items: center; min-height: 60px; }
+    .brand-logo { display: block; width: 178px; height: auto; mix-blend-mode: multiply; }
     .nav-links { display: flex; align-items: center; gap: 28px; font-size: 14px; font-weight: 700; }
     .nav-links a:not(.button):hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
     .button {
@@ -80,7 +84,7 @@
       transition: transform .18s ease, box-shadow .18s ease;
     }
     .button:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
-    .button:focus-visible, a:focus-visible { outline: 3px solid #5b66ff; outline-offset: 4px; }
+    .button:focus-visible, a:focus-visible { outline: 3px solid #d14b79; outline-offset: 4px; }
     .button.dark { background: var(--dark); color: white; box-shadow: 3px 3px 0 var(--accent); }
     .button.ghost { background: transparent; box-shadow: none; }
 
@@ -91,7 +95,7 @@
     h1 { margin: 0; max-width: 720px; font-size: clamp(55px, 7.7vw, 104px); line-height: .95; letter-spacing: -.075em; font-weight: 900; text-wrap: balance; }
     .marker { position: relative; z-index: 0; white-space: nowrap; }
     .marker::after { content: ""; position: absolute; z-index: -1; left: -.04em; right: -.04em; bottom: .03em; height: .31em; background: var(--accent); transform: rotate(-1deg); }
-    .hero-copy { margin: 32px 0 0; max-width: 600px; font-size: clamp(18px, 2vw, 23px); line-height: 1.6; color: #484b42; text-wrap: pretty; }
+    .hero-copy { margin: 32px 0 0; max-width: 600px; font-size: clamp(18px, 2vw, 23px); line-height: 1.6; color: #506273; text-wrap: pretty; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px; }
     .micro { margin-top: 22px; color: var(--muted); font-size: 13px; }
 
@@ -106,19 +110,19 @@
       box-shadow: 9px 9px 0 var(--accent);
       overflow: hidden;
     }
-    .workflow::after { content: ""; position: absolute; width: 230px; height: 230px; right: -120px; top: -120px; border: 1px solid #3a3d34; border-radius: 50%; box-shadow: 0 0 0 36px #191c16, 0 0 0 37px #3a3d34; }
+    .workflow::after { content: ""; position: absolute; width: 230px; height: 230px; right: -120px; top: -120px; border: 1px solid #456984; border-radius: 50%; box-shadow: 0 0 0 36px #173b57, 0 0 0 37px #456984; }
     .window-bar { display: flex; align-items: center; justify-content: space-between; color: var(--dark-muted); font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .1em; }
     .dots { display: flex; gap: 6px; }
-    .dots i { width: 8px; height: 8px; display: block; border: 1px solid #6d7165; border-radius: 50%; }
+    .dots i { width: 8px; height: 8px; display: block; border: 1px solid #7891a4; border-radius: 50%; }
     .flow-body { position: relative; z-index: 1; padding-top: 48px; }
     .flow-label { color: var(--accent); font: 700 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; }
     .flow-title { margin: 10px 0 30px; max-width: 390px; font-size: 29px; line-height: 1.18; letter-spacing: -.05em; }
-    .step { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 14px; min-height: 76px; padding: 12px 14px; border-top: 1px solid #34372f; }
-    .step:last-child { border-bottom: 1px solid #34372f; }
-    .step-number { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #55594e; border-radius: 50%; color: var(--dark-muted); font: 700 11px/1 monospace; }
+    .step { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 14px; min-height: 76px; padding: 12px 14px; border-top: 1px solid #31516a; }
+    .step:last-child { border-bottom: 1px solid #31516a; }
+    .step-number { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #55738a; border-radius: 50%; color: var(--dark-muted); font: 700 11px/1 monospace; }
     .step strong { display: block; font-size: 15px; }
     .step span { display: block; margin-top: 5px; color: var(--dark-muted); font-size: 12px; }
-    .status { padding: 7px 9px; border: 1px solid #51554a; border-radius: 999px; color: var(--accent); font: 700 10px/1 monospace; }
+    .status { padding: 7px 9px; border: 1px solid #55738a; border-radius: 999px; color: var(--accent); font: 700 10px/1 monospace; }
     .pulse { width: 7px; height: 7px; display: inline-block; margin-right: 5px; background: var(--accent); border-radius: 50%; animation: pulse 1.7s infinite; }
     @keyframes pulse { 50% { opacity: .3; transform: scale(.76); } }
 
@@ -141,8 +145,8 @@
 
     .process { background: var(--dark); color: white; }
     .process .section-tag, .process .section-lead { color: var(--dark-muted); }
-    .process-list { margin-top: 76px; border-top: 1px solid #383b33; }
-    .process-row { display: grid; grid-template-columns: 90px .72fr 1fr; gap: 35px; align-items: start; padding: 36px 0; border-bottom: 1px solid #383b33; }
+    .process-list { margin-top: 76px; border-top: 1px solid #385873; }
+    .process-row { display: grid; grid-template-columns: 90px .72fr 1fr; gap: 35px; align-items: start; padding: 36px 0; border-bottom: 1px solid #385873; }
     .process-row .num { color: var(--accent); font: 700 13px/1 monospace; }
     .process-row h3 { margin: 0; font-size: 27px; letter-spacing: -.045em; }
     .process-row p { margin: 0; color: var(--dark-muted); line-height: 1.7; }
@@ -157,8 +161,8 @@
     .service-card li { position: relative; margin-top: 11px; padding-left: 18px; font-size: 14px; }
     .service-card li::before { content: "↳"; position: absolute; left: 0; }
     .service-card.featured { background: var(--accent); }
-    .service-card.featured .service-meta, .service-card.featured > p { color: #414a15; }
-    .service-card.featured ul { border-color: #a8bf36; }
+    .service-card.featured .service-meta, .service-card.featured > p { color: #50677b; }
+    .service-card.featured ul { border-color: #d3aab6; }
 
     .lab { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .lab-head { display: flex; justify-content: space-between; gap: 40px; align-items: end; }
@@ -170,7 +174,7 @@
     .report-sheet { position: absolute; width: 58%; height: 64%; right: 8%; top: 10%; padding: 24px; background: #f5f1e4; color: var(--ink); border: 1px solid #777a70; transform: rotate(3deg); box-shadow: 0 18px 55px rgba(0,0,0,.35); }
     .sheet-line { height: 7px; margin-bottom: 11px; background: #d5d2c8; }
     .sheet-line.black { width: 42%; height: 14px; background: var(--ink); }
-    .sheet-line.lime { width: 67%; background: #b8da22; }
+    .sheet-line.lime { width: 67%; background: #dda9b7; }
     .sheet-line.short { width: 68%; }
     .demo-content { position: relative; z-index: 2; }
     .demo-label { display: inline-flex; padding: 7px 9px; background: var(--accent); color: var(--accent-ink); border-radius: 5px; font: 800 10px/1 monospace; text-transform: uppercase; letter-spacing: .08em; }
@@ -192,20 +196,20 @@
     .contact .section-tag { color: var(--accent); }
     .contact h2 { margin: 0; font-size: clamp(49px, 7vw, 92px); line-height: .98; letter-spacing: -.075em; }
     .contact p { max-width: 620px; margin: 26px 0 0; color: var(--dark-muted); font-size: 18px; line-height: 1.7; }
-    .diagnosis { padding: 28px; border: 1px solid #464a40; border-radius: var(--radius); background: #171a14; }
+    .diagnosis { padding: 28px; border: 1px solid #456984; border-radius: var(--radius); background: #153752; }
     .diagnosis h3 { margin: 0 0 8px; font-size: 22px; }
     .diagnosis > p { margin: 0 0 22px; font-size: 13px; }
     .field { margin-top: 13px; }
     .field label { display: block; margin-bottom: 7px; color: var(--dark-muted); font-size: 12px; }
-    .field input, .field textarea { width: 100%; border: 1px solid #4b4f44; border-radius: 9px; background: #11130f; color: white; padding: 14px; outline: none; }
+    .field input, .field textarea { width: 100%; border: 1px solid #4f7088; border-radius: 9px; background: #0e2b43; color: white; padding: 14px; outline: none; }
     .field textarea { min-height: 110px; resize: vertical; }
-    .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(223,255,83,.18); }
+    .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(240,216,223,.22); }
     .diagnosis .button { width: 100%; margin-top: 14px; }
     .form-note { margin: 11px 0 0 !important; font-size: 11px !important; }
-    .form-message { display: none; margin-top: 14px; padding: 13px; border: 1px solid #58621f; border-radius: 8px; color: var(--accent); font-size: 13px; line-height: 1.5; }
+    .form-message { display: none; margin-top: 14px; padding: 13px; border: 1px solid #bc8f9d; border-radius: 8px; color: var(--accent); font-size: 13px; line-height: 1.5; }
     .form-message.show { display: block; }
 
-    footer { padding: 34px 0; background: var(--dark); color: var(--dark-muted); border-top: 1px solid #30332c; font-size: 12px; }
+    footer { padding: 34px 0; background: var(--dark); color: var(--dark-muted); border-top: 1px solid #31516a; font-size: 12px; }
     .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
 
     .reveal { opacity: 1; transform: none; }
@@ -214,8 +218,9 @@
     @media (max-width: 900px) {
       .nav-links a:not(.button) { display: none; }
       .hero { padding: 66px 0 80px; }
-      .hero-grid, .lab-grid, .principles-grid, .contact-inner { grid-template-columns: 1fr; }
+      .hero-grid, .lab-grid, .principles-grid, .contact-inner { grid-template-columns: minmax(0, 1fr); }
       .hero-grid { gap: 56px; }
+      .hero-grid > *, .workflow { min-width: 0; width: 100%; }
       .workflow { min-height: 515px; }
       .services-grid { grid-template-columns: 1fr; }
       .service-card { min-height: 350px; }
@@ -230,6 +235,7 @@
     @media (max-width: 620px) {
       .wrap { width: min(calc(100% - 26px), var(--max)); }
       .nav-inner { min-height: 66px; }
+      .brand-logo { width: 154px; }
       .nav .button { display: none; }
       h1 { font-size: 53px; }
       .hero-copy { font-size: 17px; }
@@ -266,9 +272,8 @@
 
   <nav class="nav" aria-label="주요 메뉴">
     <div class="wrap nav-inner">
-      <a class="brand" href="#top" aria-label="HelpDream 홈">
-        <span class="brand-mark" aria-hidden="true"></span>
-        HelpDream
+      <a class="brand" href="#top" aria-label="에이치디미디어 홈">
+        <img class="brand-logo" src="assets/hdmedia-ci-horizontal.png" alt="에이치디미디어 · 맞춤형 마케팅 전략" width="482" height="184" />
       </a>
       <div class="nav-links">
         <a href="#approach">접근 방식</a>
@@ -285,7 +290,7 @@
         <div>
           <p class="eyebrow">Execution-first AX Studio</p>
           <h1>보고서가 아니라,<br><span class="marker">작동하는 AI</span>를<br>만듭니다.</h1>
-          <p class="hero-copy">HelpDream은 기업의 반복 업무를 찾아내고, AI 에이전트와 자동화 시스템으로 직접 구현하는 실행형 AX 스튜디오입니다.</p>
+          <p class="hero-copy">에이치디미디어는 기업의 반복 업무를 찾아내고, AI 에이전트와 자동화 시스템으로 직접 구현하는 실행형 AX 스튜디오입니다.</p>
           <div class="hero-actions">
             <a class="button dark" href="#contact">우리 회사의 AX 기회 찾기 <span aria-hidden="true">→</span></a>
             <a class="button ghost" href="#lab">자체 데모 보기</a>
@@ -339,8 +344,8 @@
       </div>
     </section>
 
-    <section class="manifesto" aria-label="HelpDream의 핵심 원칙">
-      <div class="wrap"><p>HelpDream은 전사 혁신이라는 큰 말보다, <u>가장 많은 시간을 잡아먹는 업무 하나</u>를 먼저 바꿉니다.</p></div>
+    <section class="manifesto" aria-label="에이치디미디어의 핵심 원칙">
+      <div class="wrap"><p>에이치디미디어는 전사 혁신이라는 큰 말보다, <u>가장 많은 시간을 잡아먹는 업무 하나</u>를 먼저 바꿉니다.</p></div>
     </section>
 
     <section class="process" id="approach">
@@ -388,8 +393,8 @@
     <section class="lab" id="lab">
       <div class="wrap">
         <div class="lab-head">
-          <div><p class="section-tag">HelpDream AX Lab</p><h2 class="section-title reveal">말보다 먼저,<br>직접 만들어봅니다.</h2></div>
-          <p class="honesty">아래 항목은 고객사 납품 실적이 아닌 HelpDream의 자체 데모·제품 실험입니다. 검증되지 않은 성과를 사례처럼 포장하지 않습니다.</p>
+          <div><p class="section-tag">HD Media AX Lab</p><h2 class="section-title reveal">말보다 먼저,<br>직접 만들어봅니다.</h2></div>
+          <p class="honesty">아래 항목은 고객사 납품 실적이 아닌 에이치디미디어의 자체 데모·제품 실험입니다. 검증되지 않은 성과를 사례처럼 포장하지 않습니다.</p>
         </div>
         <div class="lab-grid">
           <article class="demo reveal">
@@ -441,7 +446,7 @@
   </main>
 
   <footer>
-    <div class="wrap footer-inner"><span>© 2026 HelpDream. Execution-first AX Studio.</span><span>Prototype v0.1 · Seoul, Korea</span></div>
+    <div class="wrap footer-inner"><span>© 2026 에이치디미디어. Execution-first AX Studio.</span><span>Prototype v0.2 · Seoul, Korea</span></div>
   </footer>
 
   <script>

@@ -667,12 +667,27 @@
         await navigator.clipboard.writeText(diagnosisCopy);
         message.textContent = '진단 결과를 클립보드에 복사했습니다.';
       } catch {
-        const range = document.createRange();
-        range.selectNodeContents(document.getElementById('diagnosis-result'));
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        message.textContent = '결과가 선택되었습니다. 복사 명령을 실행해주세요.';
+        const fallback = document.createElement('textarea');
+        fallback.value = diagnosisCopy;
+        fallback.setAttribute('readonly', '');
+        fallback.style.position = 'fixed';
+        fallback.style.opacity = '0';
+        document.body.appendChild(fallback);
+        fallback.select();
+        const copied = document.execCommand('copy');
+        fallback.remove();
+        document.getElementById('diagnosis-result').focus({ preventScroll: true });
+
+        if (copied) {
+          message.textContent = '진단 결과를 클립보드에 복사했습니다.';
+        } else {
+          const range = document.createRange();
+          range.selectNodeContents(document.getElementById('diagnosis-result'));
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          message.textContent = '결과가 선택되었습니다. 복사 명령을 실행해주세요.';
+        }
       }
     });
   </script>

@@ -203,8 +203,17 @@
     .field input:focus, .field textarea:focus { border-color: var(--accent-bright); box-shadow: 0 0 0 3px rgba(103,160,255,.13); }
     .diagnosis .button { width: 100%; margin-top: 14px; }
     .form-note { margin: 11px 0 0 !important; color: #8195a6 !important; font-size: 11px !important; line-height: 1.5; }
-    .form-message { display: none; margin-top: 14px; padding: 13px; border: 1px solid #3f6a91; border-radius: 7px; color: #9bc0ff; font-size: 13px; line-height: 1.5; }
-    .form-message.show { display: block; }
+    .diagnosis-result { margin-top: 16px; padding: 20px; border: 1px solid #5687b5; border-radius: 9px; background: #0a2033; scroll-margin-top: 92px; outline: none; }
+    .diagnosis-result[hidden] { display: none; }
+    .result-kicker { display: block; margin-bottom: 7px; color: var(--accent-bright); font: 700 10px/1.2 var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    .diagnosis-result h4 { margin: 0 0 16px; font-size: 20px; line-height: 1.35; }
+    .result-row { padding: 13px 0; border-top: 1px solid #294963; }
+    .result-row b { display: block; margin-bottom: 5px; color: #8ea4b7; font-size: 11px; }
+    .result-row p { margin: 0; color: #e5edf5; font-size: 13px; line-height: 1.65; }
+    .result-actions { display: flex; gap: 8px; margin-top: 15px; }
+    .copy-button { min-height: 44px; padding: 0 15px; border: 1px solid #53728d; border-radius: 7px; background: transparent; color: #dce8f2; font-weight: 700; cursor: pointer; }
+    .copy-button:hover, .copy-button:focus-visible { border-color: var(--accent-bright); color: white; }
+    .form-message { min-height: 18px; margin: 8px 0 0; color: #9bc0ff; font-size: 12px; line-height: 1.5; }
 
     footer { padding: 32px 0; background: #07192b; color: #879bad; border-top: 1px solid #203a52; font-size: 12px; }
     .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
@@ -526,12 +535,20 @@
         </div>
         <form class="diagnosis" id="diagnosis-form">
           <h3>미디어 AX 기회 간이 진단</h3>
-          <p>정식 상담 채널 연결 전 사용하는 프로토타입 폼입니다.</p>
+          <p>반복 업무를 입력하면 적합한 AX 시작점을 바로 정리해드립니다.</p>
           <div class="field"><label for="company">회사 또는 팀</label><input id="company" name="company" autocomplete="organization" placeholder="예: 브랜드 마케팅팀, 콘텐츠 스튜디오" /></div>
           <div class="field"><label for="work">가장 많은 시간이 드는 반복 업무</label><textarea id="work" name="work" required placeholder="예: 매주 여러 매체의 성과를 모아 리포트를 작성합니다."></textarea></div>
           <button class="button" type="submit">진단 내용 정리하기 <span aria-hidden="true">→</span></button>
-          <p class="form-note">현재는 서버로 전송되지 않으며 입력 내용은 브라우저 밖으로 나가지 않습니다.</p>
-          <div class="form-message" id="form-message" role="status"></div>
+          <p class="form-note">입력 내용은 서버로 전송되거나 저장되지 않으며 이 브라우저 안에서만 분석됩니다.</p>
+          <section class="diagnosis-result" id="diagnosis-result" tabindex="-1" aria-labelledby="result-title" hidden>
+            <span class="result-kicker">Quick AX diagnosis</span>
+            <h4 id="result-title"><span id="result-company">현재 조직</span>의 추천 AX 시작점</h4>
+            <div class="result-row"><b>진단 업무 유형</b><p id="result-category"></p></div>
+            <div class="result-row"><b>추천 파일럿</b><p id="result-pilot"></p></div>
+            <div class="result-row"><b>첫 번째 실행 단계</b><p id="result-next-step"></p></div>
+            <div class="result-actions"><button class="copy-button" id="copy-diagnosis" type="button">진단 결과 복사</button></div>
+            <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+          </section>
         </form>
       </div>
     </section>
@@ -585,13 +602,78 @@
       revealItems.forEach(item => observer.observe(item));
     }
 
+    const diagnosisPatterns = [
+      {
+        keywords: ['데이터', '성과', '리포트', '보고서', '보고', '매체', '플랫폼', '취합'],
+        category: '성과 데이터·리포팅 AX',
+        pilot: '매체별 데이터를 한곳에 모으고, 핵심 변화와 원인을 요약해 보고서 초안까지 만드는 리포팅 워크플로를 먼저 검증해보세요.',
+        next: '최근 보고서 2~3개와 사용 중인 매체 목록을 기준으로 수집 항목, 계산 기준, 담당자 검수 지점을 한 장으로 정의합니다.'
+      },
+      {
+        keywords: ['콘텐츠', '카피', '이미지', '영상', '제작', '채널', '소재', '배너'],
+        category: '콘텐츠 제작·채널 변환 AX',
+        pilot: '하나의 핵심 메시지를 채널별 카피와 제작안으로 변환하고, 브랜드 기준에 따라 담당자가 검수하는 콘텐츠 워크플로를 추천합니다.',
+        next: '최근 캠페인 1건의 브리프와 채널별 결과물을 모아 반드시 유지할 메시지, 변형 가능한 요소, 금지 기준을 구분합니다.'
+      },
+      {
+        keywords: ['브리프', '기획', '아이디어', '트렌드', '리서치', '시장', '경쟁'],
+        category: '기획·브리프 AX',
+        pilot: '시장·경쟁·고객 신호를 모아 브랜드에 의미 있는 변화만 선별하고, 캠페인 브리프 초안으로 연결하는 기획 워크플로를 추천합니다.',
+        next: '반복해서 참고하는 정보원과 기존 브리프 2~3개를 모아 좋은 기획안의 필수 항목과 판단 기준을 먼저 구조화합니다.'
+      },
+      {
+        keywords: ['승인', '검수', '협업', '메일', '요청', '정리', '공유', '수정'],
+        category: '운영·승인 워크플로 AX',
+        pilot: '요청 접수부터 초안 생성, 담당자 검수, 수정 이력과 최종 승인까지 이어지는 운영 워크플로를 먼저 자동화해보세요.',
+        next: '실제 업무 1건이 거치는 담당자와 도구, 승인 조건, 자주 생기는 예외를 순서대로 적어 현재 흐름을 가시화합니다.'
+      }
+    ];
+
+    const createDiagnosis = (work) => {
+      const normalized = work.toLowerCase();
+      return diagnosisPatterns.find(item => item.keywords.some(keyword => normalized.includes(keyword))) || {
+        category: '반복 업무 워크플로 AX',
+        pilot: '반복 빈도가 높고 판단 기준이 비교적 명확한 한 가지 업무를 선택해, AI 초안과 담당자 검수를 연결하는 작은 파일럿부터 시작해보세요.',
+        next: '최근 실제 사례 3건을 모아 입력 자료, 반복 작업, 최종 산출물, 담당자가 반드시 판단해야 하는 지점을 구분합니다.'
+      };
+    };
+
+    let diagnosisCopy = '';
+
     document.getElementById('diagnosis-form').addEventListener('submit', (event) => {
       event.preventDefault();
       const company = document.getElementById('company').value.trim() || '현재 조직';
       const work = document.getElementById('work').value.trim();
+      const diagnosis = createDiagnosis(work);
+      const result = document.getElementById('diagnosis-result');
+
+      document.getElementById('result-company').textContent = company;
+      document.getElementById('result-category').textContent = diagnosis.category;
+      document.getElementById('result-pilot').textContent = diagnosis.pilot;
+      document.getElementById('result-next-step').textContent = diagnosis.next;
+      document.getElementById('form-message').textContent = '간이 진단이 완료되었습니다. 아래 내용을 복사해 팀과 공유할 수 있습니다.';
+      diagnosisCopy = `[에이치디미디어 미디어 AX 간이 진단]\n조직: ${company}\n반복 업무: ${work}\n업무 유형: ${diagnosis.category}\n추천 파일럿: ${diagnosis.pilot}\n첫 실행 단계: ${diagnosis.next}`;
+
+      result.hidden = false;
+      requestAnimationFrame(() => {
+        result.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+        result.focus({ preventScroll: true });
+      });
+    });
+
+    document.getElementById('copy-diagnosis').addEventListener('click', async () => {
       const message = document.getElementById('form-message');
-      message.textContent = `${company}의 1차 미디어 AX 진단 주제: “${work}” — 입력 내용이 정리되었습니다. 실제 공개 전 문의 수신 채널을 연결할 예정입니다.`;
-      message.classList.add('show');
+      try {
+        await navigator.clipboard.writeText(diagnosisCopy);
+        message.textContent = '진단 결과를 클립보드에 복사했습니다.';
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(document.getElementById('diagnosis-result'));
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        message.textContent = '결과가 선택되었습니다. 복사 명령을 실행해주세요.';
+      }
     });
   </script>
 </body>

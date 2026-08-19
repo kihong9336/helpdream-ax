@@ -42,6 +42,13 @@ try {
     message.error ? reject(new Error(message.error.message)) : resolve(message.result);
   };
   await cdp('Runtime.enable');
+  await cdp('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true
+  });
+  await cdp('Page.reload', { ignoreCache: true });
   await waitFor(async () => {
     const { result } = await cdp('Runtime.evaluate', { expression: 'document.readyState', returnByValue: true });
     if (result.value !== 'complete') throw new Error('loading');
@@ -51,6 +58,19 @@ try {
   const expression = `(async () => {
     const form = document.getElementById('consultation-form');
     if (!form) return { exists: false };
+
+    const heroCopy = document.querySelector('.hero-copy')?.textContent.trim() || '';
+    const workflowCards = [...document.querySelectorAll('[data-workflow-card]')];
+    const workflowLinks = [...document.querySelectorAll('[data-workflow]')];
+    const evidenceTraces = [...document.querySelectorAll('.demo-trace')];
+    const firstDemoArt = document.querySelector('.demo:first-child .demo-art')?.getBoundingClientRect();
+    const firstDemoContent = document.querySelector('.demo:first-child .demo-content')?.getBoundingClientRect();
+    const engagementStages = [...document.querySelectorAll('[data-engagement-stage]')];
+    const fitSection = document.getElementById('fit');
+
+    workflowLinks[1]?.click();
+    const workflowPrefill = document.getElementById('work').value;
+    const workflowFocused = document.activeElement?.id;
 
     window.fetch = async (url, options) => {
       window.__consultationRequest = {
@@ -72,6 +92,18 @@ try {
 
     return {
       exists: true,
+      positioning: {
+        heroCopy,
+        workflowTitles: workflowCards.map(card => card.querySelector('h3')?.textContent.trim()),
+        workflowLinks: workflowLinks.length,
+        workflowPrefill,
+        workflowFocused,
+        evidenceCount: evidenceTraces.length,
+        evidenceLabels: evidenceTraces.map(trace => [...trace.querySelectorAll('dt')].map(item => item.textContent.trim())),
+        labGraphicSeparated: firstDemoArt && firstDemoContent ? firstDemoArt.bottom <= firstDemoContent.top : false,
+        engagementStages: engagementStages.map(stage => stage.querySelector('h3')?.textContent.trim()),
+        fitText: fitSection?.textContent.trim() || ''
+      },
       request: window.__consultationRequest,
       status: document.getElementById('form-message')?.textContent.trim() || '',
       successVisible: !document.getElementById('consultation-success')?.hidden,
@@ -84,6 +116,18 @@ try {
   const { result } = await cdp('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
   const actual = result.value;
   assert.equal(actual.exists, true, '상담 신청 폼이 있어야 한다');
+  assert.match(actual.positioning.heroCopy, /멀티채널 캠페인/, '첫 화면에서 타깃 업무 상황을 명확히 밝혀야 한다');
+  assert.match(actual.positioning.heroCopy, /브랜드·마케팅 조직/, '첫 화면에서 초기 구매자를 밝혀야 한다');
+  assert.deepEqual(actual.positioning.workflowTitles, ['캠페인 브리프 워크플로', '채널별 콘텐츠 변환 워크플로', '매체 성과 리포팅 워크플로']);
+  assert.equal(actual.positioning.workflowLinks, 3, '대표 업무마다 상담 CTA가 있어야 한다');
+  assert.match(actual.positioning.workflowPrefill, /채널별 콘텐츠 변환/, '업무 CTA가 상담 내용을 미리 채워야 한다');
+  assert.equal(actual.positioning.workflowFocused, 'work', '업무 CTA 후 상담 내용에 포커스해야 한다');
+  assert.equal(actual.positioning.evidenceCount, 3, '세 가지 실험에 작동 증거가 있어야 한다');
+  actual.positioning.evidenceLabels.forEach(labels => assert.deepEqual(labels, ['입력', 'AI 처리', '사람 검수', '결과물']));
+  assert.equal(actual.positioning.labGraphicSeparated, true, '모바일에서 Lab 그래픽과 본문이 겹치지 않아야 한다');
+  assert.deepEqual(actual.positioning.engagementStages, ['Scan · 범위 정의', 'Sprint · 작동형 파일럿', 'Scale · 운영 확장']);
+  assert.match(actual.positioning.fitText, /이런 팀에 적합합니다/);
+  assert.match(actual.positioning.fitText, /최근 업무자료/);
   assert.equal(actual.request.url, 'https://formsubmit.co/ajax/heesun.lee@helpdream.co.kr', '지정된 상담 수신 주소로 전송해야 한다');
   assert.equal(actual.request.method, 'POST');
   assert.equal(actual.request.fields['담당자명'], '이테스트');

@@ -49,6 +49,7 @@
     .wrap { width: min(calc(100% - 48px), var(--max)); margin-inline: auto; }
     .skip-link { position: absolute; left: -999px; }
     .skip-link:focus { left: 16px; top: 16px; z-index: 100; background: white; padding: 12px 16px; border: 2px solid var(--accent); }
+    section[id], header[id] { scroll-margin-top: 88px; }
 
     .nav {
       position: sticky;
@@ -61,11 +62,13 @@
     .nav-inner { min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
     .brand { display: inline-flex; align-items: center; flex: 0 0 auto; }
     .brand-logo { display: block; width: 176px; height: auto; }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
     .nav-links { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 700; color: #415368; }
     .nav-links > a:not(.button) { position: relative; }
     .nav-links > a:not(.button)::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -8px; height: 2px; background: var(--accent); transition: right .2s ease; }
     .nav-links > a:not(.button):hover::after { right: 0; }
     .mobile-label { display: none; }
+    .menu-toggle, .mobile-menu { display: none; }
 
     .button {
       min-height: 48px;
@@ -212,6 +215,67 @@
     @media (max-width: 900px) {
       .nav-links > a:not(.button) { display: none; }
       .nav-links { gap: 0; }
+      .menu-toggle {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 1px solid #b7c1cb;
+        border-radius: 7px;
+        background: white;
+        color: var(--ink);
+        cursor: pointer;
+      }
+      .menu-toggle:hover { border-color: #8291a1; background: #f7f9fb; }
+      .menu-toggle:focus-visible { outline: 3px solid #8fb5ff; outline-offset: 3px; }
+      .menu-icon { position: relative; width: 18px; height: 14px; display: block; }
+      .menu-icon::before, .menu-icon::after, .menu-icon span {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 18px;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+        transition: transform .2s ease, top .2s ease, opacity .15s ease;
+      }
+      .menu-icon::before { top: 0; }
+      .menu-icon span { top: 6px; }
+      .menu-icon::after { top: 12px; }
+      .nav.menu-open .menu-icon::before { top: 6px; transform: rotate(45deg); }
+      .nav.menu-open .menu-icon span { opacity: 0; }
+      .nav.menu-open .menu-icon::after { top: 6px; transform: rotate(-45deg); }
+      .mobile-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        display: block;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        background: rgba(255,255,255,.98);
+        border-bottom: 1px solid var(--line);
+        box-shadow: 0 20px 44px rgba(15, 39, 63, .14);
+        transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+      }
+      .nav.menu-open .mobile-menu { visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0); }
+      .mobile-menu-inner { padding-top: 10px; padding-bottom: 18px; }
+      .mobile-menu a {
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--line);
+        color: var(--ink-strong);
+        font-size: 17px;
+        font-weight: 780;
+      }
+      .mobile-menu a:first-child { border-top: 1px solid var(--line); }
+      .mobile-menu a span { color: #8090a1; font-size: 15px; font-weight: 500; }
       .hero { min-height: 0; padding: 72px 0 82px; }
       .hero-grid, .lab-grid, .principles-grid, .contact-inner { grid-template-columns: minmax(0, 1fr); }
       .hero-grid { gap: 54px; }
@@ -231,7 +295,8 @@
       .wrap { width: min(calc(100% - 32px), var(--max)); }
       .nav-inner { min-height: 66px; gap: 12px; }
       .brand-logo { width: 137px; }
-      .nav .button { min-height: 40px; padding: 0 13px; font-size: 12px; }
+      .nav-actions { gap: 7px; }
+      .nav .button { min-height: 44px; padding: 0 12px; font-size: 12px; }
       .desktop-label { display: none; }
       .mobile-label { display: inline; }
       .hero { padding: 58px 0 70px; }
@@ -285,11 +350,24 @@
       <a class="brand" href="#top" aria-label="에이치디미디어 홈">
         <img class="brand-logo" src="assets/hdmedia-wordmark.png" alt="에이치디미디어" width="904" height="188" />
       </a>
-      <div class="nav-links">
-        <a href="#approach">AX 접근 방식</a>
-        <a href="#services">서비스</a>
-        <a href="#lab">AX Lab</a>
-        <a class="button" href="#contact"><span class="desktop-label">미디어 AX 상담</span><span class="mobile-label">상담하기</span><span aria-hidden="true">↗</span></a>
+      <div class="nav-actions">
+        <div class="nav-links">
+          <a href="#approach">AX 접근 방식</a>
+          <a href="#services">서비스</a>
+          <a href="#lab">AX Lab</a>
+          <a class="button" href="#contact"><span class="desktop-label">미디어 AX 상담</span><span class="mobile-label">상담하기</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="메뉴 열기">
+          <span class="menu-icon" aria-hidden="true"><span></span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <div class="wrap mobile-menu-inner">
+        <a href="#approach">AX 접근 방식 <span aria-hidden="true">↘</span></a>
+        <a href="#services">서비스 <span aria-hidden="true">↘</span></a>
+        <a href="#lab">AX Lab <span aria-hidden="true">↘</span></a>
+        <a href="#contact">미디어 AX 상담 <span aria-hidden="true">↘</span></a>
       </div>
     </div>
   </nav>
@@ -466,6 +544,32 @@
   <script>
     const revealItems = document.querySelectorAll('.reveal');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nav = document.querySelector('.nav');
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    const setMobileMenu = (open) => {
+      nav.classList.toggle('menu-open', open);
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      mobileMenu.setAttribute('aria-hidden', String(!open));
+    };
+
+    menuToggle.addEventListener('click', () => setMobileMenu(!nav.classList.contains('menu-open')));
+    mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMobileMenu(false)));
+    document.querySelector('.brand').addEventListener('click', () => setMobileMenu(false));
+    document.addEventListener('click', (event) => {
+      if (!nav.contains(event.target)) setMobileMenu(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && nav.classList.contains('menu-open')) {
+        setMobileMenu(false);
+        menuToggle.focus();
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) setMobileMenu(false);
+    });
 
     if (reduceMotion || !('IntersectionObserver' in window)) {
       revealItems.forEach(item => item.classList.add('visible'));

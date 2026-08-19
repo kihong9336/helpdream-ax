@@ -1,0 +1,7 @@
+# Internal planning and generated previews
+STRATEGY.md
+preview-*.png
+mobile.png
+
+# macOS
+.DS_Store

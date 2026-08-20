@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const ko = await readFile(new URL('index.html', root), 'utf8');
 const en = await readFile(new URL('en/index.html', root), 'utf8');
+const enWordmark = await readFile(new URL('assets/hdmedia-wordmark-en.svg', root), 'utf8');
 const sitemap = await readFile(new URL('sitemap.xml', root), 'utf8');
 
 assert.match(ko, /<html lang="ko">/, 'Korean page must declare Korean');
@@ -20,6 +21,10 @@ for (const [name, html] of [['Korean', ko], ['English', en]]) {
 
 assert.match(ko, /href="\/en\/"[^>]*>EN</, 'Korean page must link to English');
 assert.match(en, /href="\/"[^>]*>KR</, 'English page must link to Korean');
+assert.match(en, /src="\/assets\/hdmedia-wordmark-en\.svg"[^>]*alt="HD Media"/, 'English header must use the English HD Media CI');
+assert.match(enWordmark, /<svg[^>]*viewBox=/, 'English CI must be a scalable SVG');
+assert.match(enWordmark, /<path\b/, 'English CI lettering must be outlined as vector paths');
+assert.doesNotMatch(enWordmark, /<text\b/, 'English CI must not depend on an installed font');
 assert.match(en, /<link rel="canonical" href="https:\/\/helpdream\.co\.kr\/en\/"/, 'English canonical URL must be /en/');
 assert.match(en, /Campaign work, powered by AI\./, 'English hero copy must be translated');
 assert.match(en, /Media AX consultation/, 'English consultation form must be translated');
